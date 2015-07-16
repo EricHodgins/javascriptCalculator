@@ -1,0 +1,62 @@
+/* prevent text highlighting on double click*/
+#calc-wrapper {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+#calc-wrapper {
+	border: 5px solid rgb(147, 147, 147);
+	width: 268px;
+	height: 440px;
+	cursor: pointer;
+}
+
+#screen-wrapper {
+	width: 100%;
+	background-color: black;	
+	margin-right: 10px;
+}
+
+#calc-screen {
+	margin-right: 20px;
+	height: 105px;
+	text-align: right;
+	line-height: 110px;
+	font-size: 45px;
+	color: #FFF;
+}
+
+
+/* for the numpad */
+.num {
+	margin: 0;
+	border: 1px solid black;
+	float: left;
+	width: 65px;
+	height: 65px;
+	text-align: center;
+	line-height: 65px;
+	font-size: 20px;
+	color: #000;
+	background-color: #BBB;
+}
+
+.num:hover {
+	background-color: #D8D1D1;
+}
+
+.zero {
+	width: 132px;
+}
+
+.op {
+	background-color: orange;
+}
+
+.op:hover {
+	background-color: #FFCE33;
+}	
