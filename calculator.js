@@ -7,14 +7,16 @@ var Calculator = function() {
 	this.accumulative = 0;
 	this.screenText = '';
 	this.defaultScreen = '0';
-	this.operation = null;
-	this.lastNumber = 0;
+	this.operation = 'add';
+	this.methodOps = false;
+	this.lastNumber = '';
+	this.currentNumber = 0;
 }
 
 Calculator.prototype.add = function(num) {
 	if (this.screenText !== '') {
 		this.accumulative += parseFloat(num);	
-	} else {
+	} else if (this.lastNumber !== ''){
 		this.accumulative += parseFloat(this.lastNumber);
 	}
 	
@@ -22,12 +24,14 @@ Calculator.prototype.add = function(num) {
 }
 
 Calculator.prototype.equals = function(operation) {
-	this[operation](this.screenText);
+	this[operation](this.currentNumber);
 	this.screenText = this.accumulative.toString();
 }
 
 Calculator.prototype.clearAll = function() {
 	this.accumulative = 0;
+	this.currentNumber = 0;
+	this.lastNumber = '';
 	this.screenText = '';
 }
 
@@ -42,16 +46,22 @@ var Calc_UI = {
 					ui.displayAnswer();				
 				}
 
-				document.getElementById('one').onclick = function() {				
+				document.getElementById('one').onclick = function() {
+					calculator.methodOps = false;				
 					calculator.screenText += '1'; 
+					calculator.currentNumber = calculator.screenText;
 					ui.displayAnswer();				
 				}
 				document.getElementById('two').onclick = function() {				
+					calculator.methodOps = false;
 					calculator.screenText += '2'; 
+					calculator.currentNumber = calculator.screenText;
 					ui.displayAnswer();				
 				}
 				document.getElementById('three').onclick = function() {				
+					calculator.methodOps = false;
 					calculator.screenText += '3'; 
+					calculator.currentNumber = calculator.screenText;
 					ui.displayAnswer();				
 				}
 				document.getElementById('four').onclick = function() {				
@@ -80,28 +90,29 @@ var Calc_UI = {
 				}
 
 				document.getElementById('clearAll').onclick = function() {
-					calculator.screenText = '';
-					calculator.accumulative = 0;
+					calculator.clearAll();
 					ui.displayAnswer();
 				}
 
 				document.getElementById('plus').onclick = function() {	
-					calculator.operation = "add";
-					print(calculator.screenText);	
-					if (calculator.screenText !== '') {
-						calculator.lastNumber = calculator.screenText;
+					
+					if (calculator.screenText !== '' && !calculator.methodOps) {
+						calculator.operation = "add";
+						calculator.methodOps = true;
+						calculator.lastNumber = calculator.currentNumber;
+						calculator.add(calculator.lastNumber);
+						calculator.screenText = calculator.accumulative.toString();
+						ui.displayAnswer();		
+						calculator.screenText = '';
+						print(calculator.screenText);
 					}
 
-					calculator.add(calculator.lastNumber);
-					calculator.screenText = calculator.accumulative.toString();
-					ui.displayAnswer();		
-					calculator.screenText = '';															
+																			
 				}
 
 				document.getElementById('equals').onclick = function() {
 					calculator.equals(calculator.operation);
-					ui.displayAnswer();	
-					calculator.screenText = '';				
+					ui.displayAnswer();			
 				}
 			
 	},
