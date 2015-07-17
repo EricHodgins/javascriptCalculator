@@ -9,14 +9,13 @@ var Calculator = function() {
 	this.defaultScreen = '0';
 	this.operation = null;
 	this.lastNumber = 0;
+	this.currentNumber = 0;
 }
 
 Calculator.prototype.add = function(num) {
 	if (this.screenText !== '') {
 		this.accumulative += parseFloat(num);	
-	} else {
-		this.accumulative += parseFloat(this.lastNumber);
-	}
+	} 
 	
 	
 }
@@ -44,6 +43,7 @@ var Calc_UI = {
 
 				document.getElementById('one').onclick = function() {				
 					calculator.screenText += '1'; 
+					calculator.currentNumber = calculator.screenText;
 					ui.displayAnswer();				
 				}
 				document.getElementById('two').onclick = function() {				
@@ -87,9 +87,9 @@ var Calc_UI = {
 
 				document.getElementById('plus').onclick = function() {	
 					calculator.operation = "add";
-					print(calculator.screenText);	
+
 					if (calculator.screenText !== '') {
-						calculator.lastNumber = calculator.screenText;
+						calculator.lastNumber = calculator.currentNumber;
 					}
 
 					calculator.add(calculator.lastNumber);
