@@ -4,35 +4,32 @@ function print(text) {
 
 // Calculator Class
 var Calculator = function() {
-	this.accumulative = 0;
 	this.screenText = '';
-	this.defaultScreen = '0';
-	this.operation = 'add';
-	this.methodOps = false;
-	this.lastNumber = '';
-	this.currentNumber = 0;
+	this.formula = '';
+	this.formulaTracking = '';
+	this.accumulative = '';
 }
 
-Calculator.prototype.add = function(num) {
-	if (this.screenText !== '') {
-		this.accumulative += parseFloat(num);	
-	} else if (this.lastNumber !== ''){
-		this.accumulative += parseFloat(this.lastNumber);
+Calculator.prototype.calculateFormula = function(formula) {
+	this.accumulative = eval(formula);
+	this.formula = this.accumulative;
+	this.screenText = this.accumulative;
+	 if (this.lastNumber === ''){
+		print('calc form = ""');
 	}
 	
 	
 }
 
-Calculator.prototype.equals = function(operation) {
-	this[operation](this.currentNumber);
-	this.screenText = this.accumulative.toString();
+Calculator.prototype.equals = function(formula) {
+	this.calculateFormula(formula);
 }
 
 Calculator.prototype.clearAll = function() {
-	this.accumulative = 0;
-	this.currentNumber = 0;
-	this.lastNumber = '';
+	this.formula = '';
+	this.formulaTracking = '';
 	this.screenText = '';
+	this.accumulative = '';
 }
 
 
@@ -40,53 +37,18 @@ Calculator.prototype.clearAll = function() {
 var Calc_UI = {
 	bindNumpad: function() {
 				var ui = this;
+				var numbersPad = document.getElementsByClassName("number");
+				for (var i = 0; i < numbersPad.length; i++) {
+					function bindAllnumbers(idx) {
+						numbersPad[idx].onclick = function() {
+							calculator.screenText += numbersPad[idx].getAttribute('value');
+							calculator.formula += numbersPad[idx].getAttribute('value');
+							calculator.formulaTracking += numbersPad[idx].getAttribute('value');
+							ui.displayAnswer();
+						}
+					}
 
-				document.getElementById('zero').onclick = function() {				
-					calculator.screenText += '0'; 
-					ui.displayAnswer();				
-				}
-
-				document.getElementById('one').onclick = function() {
-					calculator.methodOps = false;				
-					calculator.screenText += '1'; 
-					calculator.currentNumber = calculator.screenText;
-					ui.displayAnswer();				
-				}
-				document.getElementById('two').onclick = function() {				
-					calculator.methodOps = false;
-					calculator.screenText += '2'; 
-					calculator.currentNumber = calculator.screenText;
-					ui.displayAnswer();				
-				}
-				document.getElementById('three').onclick = function() {				
-					calculator.methodOps = false;
-					calculator.screenText += '3'; 
-					calculator.currentNumber = calculator.screenText;
-					ui.displayAnswer();				
-				}
-				document.getElementById('four').onclick = function() {				
-					calculator.screenText += '4'; 
-					ui.displayAnswer();				
-				}
-				document.getElementById('five').onclick = function() {				
-					calculator.screenText += '5'; 
-					ui.displayAnswer();				
-				}
-				document.getElementById('six').onclick = function() {				
-					calculator.screenText += '6'; 
-					ui.displayAnswer();				
-				}
-				document.getElementById('seven').onclick = function() {				
-					calculator.screenText += '7'; 
-					ui.displayAnswer();				
-				}
-				document.getElementById('eight').onclick = function() {				
-					calculator.screenText += '8'; 
-					ui.displayAnswer();				
-				}
-				document.getElementById('nine').onclick = function() {				
-					calculator.screenText += '9'; 
-					ui.displayAnswer();				
+					bindAllnumbers(i);
 				}
 
 				document.getElementById('clearAll').onclick = function() {
@@ -95,33 +57,67 @@ var Calc_UI = {
 				}
 
 				document.getElementById('plus').onclick = function() {	
-					
-					if (calculator.screenText !== '' && !calculator.methodOps) {
-						calculator.operation = "add";
-						calculator.methodOps = true;
-						calculator.lastNumber = calculator.currentNumber;
-						calculator.add(calculator.lastNumber);
-						calculator.screenText = calculator.accumulative.toString();
-						ui.displayAnswer();		
-						calculator.screenText = '';
-						print(calculator.screenText);
-					}
+					ui.addToFormula(' + ');
+					if (/^([-/*//])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
+						ui.adjustFormula(' + ');
+					}												
+				}
 
-																			
+				document.getElementById('minus').onclick = function() {	
+					ui.addToFormula(' - ');
+					if (/^([/+//*//])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
+						ui.adjustFormula(' - ');
+					}																						
+				}
+
+				document.getElementById('multiply').onclick = function() {	
+					ui.addToFormula(' * ');
+					if (/^([/+/-/])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
+						ui.adjustFormula(' * ');
+					}																	
+				}
+
+				document.getElementById('divide').onclick = function() {	
+					ui.addToFormula(' / ');
+					if (/^([/+//*/-])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
+						ui.adjustFormula(' / ');
+					}															
+				}
+
+				document.getElementById('decimal').onclick = function() {
+
 				}
 
 				document.getElementById('equals').onclick = function() {
-					calculator.equals(calculator.operation);
-					ui.displayAnswer();			
+					calculator.equals(calculator.formula);
+					ui.displayAnswer();		
+					calculator.clearAll();
 				}
 			
+	},
+
+	addToFormula: function(operation) {
+		if (calculator.screenText !== '') {
+			calculator.calculateFormula(calculator.formula);
+			calculator.formula += operation;
+			calculator.formulaTracking += operation;
+			this.displayAnswer();
+			calculator.screenText = '';
+		}	
+	},
+
+	adjustFormula: function(newOperator) {
+		calculator.formula = calculator.formula.substr(0, calculator.formula.length - 3);
+		calculator.formulaTracking = calculator.formulaTracking.substr(0, calculator.formulaTracking.length - 3);
+		calculator.formula += newOperator;
+		calculator.formulaTracking += newOperator;
 	},
 
 
 	displayAnswer: function() {
 		var ans = document.getElementById('calc-screen');	
 		if (calculator.screenText === '') {
-			ans.innerHTML = calculator.defaultScreen;
+			ans.innerHTML = '0';
 		} else {
 			ans.innerHTML = calculator.screenText;	
 		}
