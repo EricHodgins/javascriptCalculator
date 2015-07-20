@@ -84,14 +84,10 @@ var Calc_UI = {
 					}															
 				}
 
-				document.getElementById('decimal').onclick = function() {
-
-				}
-
 				document.getElementById('equals').onclick = function() {
 					calculator.equals(calculator.formula);
 					ui.displayAnswer();		
-					calculator.clearAll();
+					calculator.screenText = "";
 				}
 			
 	},
