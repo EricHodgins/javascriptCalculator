@@ -10,8 +10,8 @@
 
 #calc-wrapper {
 	border: 5px solid rgb(147, 147, 147);
-	width: 268px;
-	height: 440px;
+	width: 261px;
+	height: 431px;
 	cursor: pointer;
 }
 
@@ -33,30 +33,31 @@
 
 /* for the numpad */
 .num {
-	margin: 0;
+	margin: -1px;
 	border: 1px solid black;
 	float: left;
 	width: 65px;
 	height: 65px;
 	text-align: center;
 	line-height: 65px;
-	font-size: 20px;
+	font-size: 30px;
 	color: #000;
-	background-color: #BBB;
+	background-color: #F5F5F5;
 }
 
-.num:hover {
+.num:active {
 	background-color: #D8D1D1;
 }
 
 .zero {
-	width: 132px;
+	width: 130px;
 }
 
 .op {
 	background-color: orange;
+	color: #FFF;
 }
 
-.op:hover {
+.op:active {
 	background-color: #FFCE33;
 }	
