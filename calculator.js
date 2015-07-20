@@ -5,34 +5,27 @@ function print(text) {
 // Calculator Class
 var Calculator = function() {
 	this.screenText = '';
-	this.storedNumber = '';
-	this.accumulative = 0;
-	this.operation = false;
-	this.savedOperation = false;
+	this.formula = '';
+	this.formulaTracking = '';
+	this.accumulative = '';
+	this.equalsPressed = false;
 }
 
-Calculator.prototype.add = function(num) {
-	if (this.screenText !== '') {
-		this.accumulative += parseFloat(num);
-	}
+Calculator.prototype.calculateFormula = function(formula) {
+	this.accumulative = eval(formula);
+	this.formula = this.accumulative;
+	this.screenText = this.accumulative;	
 }
 
-Calculator.prototype.subtract = function(num) {
-	if (this.screenText !== '') {
-		this.accumulative -= parseFloat(num);
-		print(this.accumulative);
-	}
-}
-
-Calculator.prototype.equals = function(operation) {
-	if (this.screenText !== '') {
-		this[operation](this.storedNumber);
-	}
+Calculator.prototype.equals = function(formula) {
+	this.calculateFormula(formula);
 }
 
 Calculator.prototype.clearAll = function() {
+	this.formula = '';
+	this.formulaTracking = '';
 	this.screenText = '';
-	this.accumulative = 0;
+	this.accumulative = '';
 }
 
 
@@ -40,124 +33,99 @@ Calculator.prototype.clearAll = function() {
 var Calc_UI = {
 	bindNumpad: function() {
 				var ui = this;
-
-				document.getElementById('decimal').onclick = function() {				
-					calculator.screenText += '.'; 
-					calculator.storedNumber = calculator.screenText;
-					calculator.operation = false;
-					ui.displayAnswer();				
-				}				
-
-				document.getElementById('zero').onclick = function() {				
-					calculator.screenText += '0'; 
-					calculator.storedNumber = calculator.screenText;
-					calculator.operation = false;
-					ui.displayAnswer();				
-				}
-
-				document.getElementById('one').onclick = function() {		
-					calculator.screenText += '1';
-					calculator.storedNumber = calculator.screenText;
-					calculator.operation = false; 					
-					ui.displayAnswer();				
-				}
-				document.getElementById('two').onclick = function() {									
-					calculator.screenText += '2';
-					calculator.storedNumber = calculator.screenText;
-					calculator.operation = false; 			
-					ui.displayAnswer();				
-				}
-				document.getElementById('three').onclick = function() {								
-					calculator.screenText += '3';
-					calculator.storedNumber = calculator.screenText;
-					calculator.operation = false; 				
-					ui.displayAnswer();				
-				}
-				document.getElementById('four').onclick = function() {				
-					calculator.screenText += '4'; 
-					ui.displayAnswer();				
-				}
-				document.getElementById('five').onclick = function() {				
-					calculator.screenText += '5'; 
-					ui.displayAnswer();				
-				}
-				document.getElementById('six').onclick = function() {				
-					calculator.screenText += '6'; 
-					ui.displayAnswer();				
-				}
-				document.getElementById('seven').onclick = function() {				
-					calculator.screenText += '7'; 
-					ui.displayAnswer();				
-				}
-				document.getElementById('eight').onclick = function() {				
-					calculator.screenText += '8'; 
-					ui.displayAnswer();				
-				}
-				document.getElementById('nine').onclick = function() {				
-					calculator.screenText += '9'; 
-					ui.displayAnswer();				
-				}
-			
-
-				document.getElementById('plus').onclick = function() {	
-					if (calculator.operation !== 'add') {						
-						calculator.savedOperation = 'add';
-
-						if (calculator.operation !== 'equals') {
-							calculator.operation = 'add';
-							calculator.add(calculator.screenText);
-							calculator.screenText = calculator.accumulative;
-							ui.displayAnswer();												
+				var numbersPad = document.getElementsByClassName("number");
+				for (var i = 0; i < numbersPad.length; i++) {
+					function bindAllnumbers(idx) {
+						numbersPad[idx].onclick = function() {
+							if (calculator.equalsPressed === true) {
+								calculator.clearAll();
+								calculator.equalsPressed = false;
+							}
+							calculator.screenText += numbersPad[idx].getAttribute('value');
+							calculator.formula += numbersPad[idx].getAttribute('value');
+							calculator.formulaTracking += numbersPad[idx].getAttribute('value');
+							ui.displayAnswer();
 						}
-
-						calculator.screenText = '';
 					}
 
-																			
-				}
-
-				document.getElementById('minus').onclick = function() {	
-					if (calculator.operation !== 'subtract') {						
-						calculator.savedOperation = 'subtract';
-
-						if (calculator.operation !== 'equals') {
-							calculator.operation = 'subtract';
-							calculator.subtract(calculator.screenText);
-							calculator.screenText = calculator.accumulative;
-							ui.displayAnswer();												
-						}
-
-						calculator.screenText = '';
-					}
-
-																			
-				}
-
-				document.getElementById('equals').onclick = function() {
-					calculator.operation = 'equals';
-					calculator.equals(calculator.savedOperation);
-					calculator.screenText = calculator.accumulative;
-					ui.displayAnswer();
+					bindAllnumbers(i);
 				}
 
 				document.getElementById('clearAll').onclick = function() {
 					calculator.clearAll();
 					ui.displayAnswer();
 				}
+
+				document.getElementById('plus').onclick = function() {	
+					if (/^([-/*//])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
+						ui.adjustFormula(' + ');
+					} else {
+						ui.addToFormula(' + ');
+					}												
+				}
+
+				document.getElementById('minus').onclick = function() {	
+					if (/^([/+//*//])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
+						ui.adjustFormula(' - ');
+					} else {
+						ui.addToFormula(' - ');
+					}																						
+				}
+
+				document.getElementById('multiply').onclick = function() {	
+					if (/^([/+//-])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
+						ui.adjustFormula(' * ');
+					} else {
+						ui.addToFormula(' * ');
+					}																	
+				}
+
+				document.getElementById('divide').onclick = function() {	
+					if (/^([/+//*/-])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
+						ui.adjustFormula(' / ');
+					} else {
+						ui.addToFormula(' / ');	
+					}															
+				}
+
+				document.getElementById('equals').onclick = function() {
+					calculator.equals(calculator.formula);
+					ui.displayAnswer();		
+					calculator.formula = calculator.screenText;
+					calculator.screenText = '';
+					calculator.equalsPressed = true;
+				}
 			
+	},
+
+	addToFormula: function(operation) {
+		if (calculator.formula !== '') {
+			calculator.calculateFormula(calculator.formula);
+			calculator.formula += operation;
+			calculator.formulaTracking += operation;
+			this.displayAnswer();
+			calculator.screenText = '';
+			calculator.equalsPressed = false;
+		}	
+	},
+
+	adjustFormula: function(newOperator) {
+		calculator.formula = calculator.formula.substr(0, calculator.formula.length - 3);
+		calculator.formulaTracking = calculator.formulaTracking.substr(0, calculator.formulaTracking.length - 3);
+		calculator.formula += newOperator;
+		calculator.formulaTracking += newOperator;
+		calculator.equalsPressed = false;
 	},
 
 
 	displayAnswer: function() {
 		var ans = document.getElementById('calc-screen');	
 		if (calculator.screenText === '') {
-			ans.innerHTML = 0;
+			ans.innerHTML = '0';
 		} else {
 			ans.innerHTML = calculator.screenText;	
-		}
-		
+		}	
 	}
-
 }
 
 // app
