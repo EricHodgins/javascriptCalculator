@@ -8,17 +8,13 @@ var Calculator = function() {
 	this.formula = '';
 	this.formulaTracking = '';
 	this.accumulative = '';
+	this.equalsPressed = false;
 }
 
 Calculator.prototype.calculateFormula = function(formula) {
 	this.accumulative = eval(formula);
 	this.formula = this.accumulative;
-	this.screenText = this.accumulative;
-	 if (this.lastNumber === ''){
-		print('calc form = ""');
-	}
-	
-	
+	this.screenText = this.accumulative;	
 }
 
 Calculator.prototype.equals = function(formula) {
@@ -41,6 +37,10 @@ var Calc_UI = {
 				for (var i = 0; i < numbersPad.length; i++) {
 					function bindAllnumbers(idx) {
 						numbersPad[idx].onclick = function() {
+							if (calculator.equalsPressed === true) {
+								calculator.clearAll();
+								calculator.equalsPressed = false;
+							}
 							calculator.screenText += numbersPad[idx].getAttribute('value');
 							calculator.formula += numbersPad[idx].getAttribute('value');
 							calculator.formulaTracking += numbersPad[idx].getAttribute('value');
@@ -57,48 +57,55 @@ var Calc_UI = {
 				}
 
 				document.getElementById('plus').onclick = function() {	
-					ui.addToFormula(' + ');
 					if (/^([-/*//])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
 						ui.adjustFormula(' + ');
+					} else {
+						ui.addToFormula(' + ');
 					}												
 				}
 
 				document.getElementById('minus').onclick = function() {	
-					ui.addToFormula(' - ');
 					if (/^([/+//*//])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
 						ui.adjustFormula(' - ');
+					} else {
+						ui.addToFormula(' - ');
 					}																						
 				}
 
 				document.getElementById('multiply').onclick = function() {	
-					ui.addToFormula(' * ');
-					if (/^([/+/-/])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
+					if (/^([/+//-])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
 						ui.adjustFormula(' * ');
+					} else {
+						ui.addToFormula(' * ');
 					}																	
 				}
 
 				document.getElementById('divide').onclick = function() {	
-					ui.addToFormula(' / ');
 					if (/^([/+//*/-])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
 						ui.adjustFormula(' / ');
+					} else {
+						ui.addToFormula(' / ');	
 					}															
 				}
 
 				document.getElementById('equals').onclick = function() {
 					calculator.equals(calculator.formula);
 					ui.displayAnswer();		
-					calculator.screenText = "";
+					calculator.formula = calculator.screenText;
+					calculator.screenText = '';
+					calculator.equalsPressed = true;
 				}
 			
 	},
 
 	addToFormula: function(operation) {
-		if (calculator.screenText !== '') {
+		if (calculator.formula !== '') {
 			calculator.calculateFormula(calculator.formula);
 			calculator.formula += operation;
 			calculator.formulaTracking += operation;
 			this.displayAnswer();
 			calculator.screenText = '';
+			calculator.equalsPressed = false;
 		}	
 	},
 
@@ -107,6 +114,7 @@ var Calc_UI = {
 		calculator.formulaTracking = calculator.formulaTracking.substr(0, calculator.formulaTracking.length - 3);
 		calculator.formula += newOperator;
 		calculator.formulaTracking += newOperator;
+		calculator.equalsPressed = false;
 	},
 
 
@@ -116,10 +124,8 @@ var Calc_UI = {
 			ans.innerHTML = '0';
 		} else {
 			ans.innerHTML = calculator.screenText;	
-		}
-		
+		}	
 	}
-
 }
 
 // app
