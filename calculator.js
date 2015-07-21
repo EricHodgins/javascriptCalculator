@@ -57,15 +57,15 @@ var Calc_UI = {
 				}
 
 				document.getElementById('plus').onclick = function() {	
-					if (/^([-/*//])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
+					if (/^([-/*///+/])$/.test(calculator.formula[calculator.formula.length - 2]) ) {						
 						ui.adjustFormula(' + ');
-					} else {
+					} else {						
 						ui.addToFormula(' + ');
 					}												
 				}
 
 				document.getElementById('minus').onclick = function() {	
-					if (/^([/+//*//])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
+					if (/^([/+//*//-])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
 						ui.adjustFormula(' - ');
 					} else {
 						ui.addToFormula(' - ');
@@ -73,7 +73,7 @@ var Calc_UI = {
 				}
 
 				document.getElementById('multiply').onclick = function() {	
-					if (/^([/+//-])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
+					if (/^([/+//*//-])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
 						ui.adjustFormula(' * ');
 					} else {
 						ui.addToFormula(' * ');
@@ -81,9 +81,9 @@ var Calc_UI = {
 				}
 
 				document.getElementById('divide').onclick = function() {	
-					if (/^([/+//*/-])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
+					if (/^([/+//*/-/])$/.test(calculator.formula[calculator.formula.length - 2]) ) {						
 						ui.adjustFormula(' / ');
-					} else {
+					} else {					
 						ui.addToFormula(' / ');	
 					}															
 				}
