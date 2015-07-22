@@ -26,6 +26,7 @@ Calculator.prototype.clearAll = function() {
 	this.formulaTracking = '';
 	this.screenText = '';
 	this.accumulative = '';
+	this.equalsPressed = false;
 }
 
 
@@ -38,10 +39,9 @@ var Calc_UI = {
 					function bindAllnumbers(idx) {
 						numbersPad[idx].onclick = function() {
 							if (calculator.equalsPressed === true) {
-								calculator.clearAll();
-								calculator.equalsPressed = false;
-							}
-							calculator.screenText += numbersPad[idx].getAttribute('value');
+								calculator.clearAll();							
+							}						
+							calculator.screenText += numbersPad[idx].getAttribute('value');							
 							calculator.formula += numbersPad[idx].getAttribute('value');
 							calculator.formulaTracking += numbersPad[idx].getAttribute('value');
 							ui.displayAnswer();
@@ -57,9 +57,11 @@ var Calc_UI = {
 				}
 
 				document.getElementById('plus').onclick = function() {	
-					if (/^([-/*///+/])$/.test(calculator.formula[calculator.formula.length - 2]) ) {						
+					if (/^([-/*///+/])$/.test(calculator.formula[calculator.formula.length - 2]) ) {		
+						print('adjust');				
 						ui.adjustFormula(' + ');
-					} else {						
+					} else {
+						print('add');						
 						ui.addToFormula(' + ');
 					}												
 				}
@@ -86,6 +88,20 @@ var Calc_UI = {
 					} else {					
 						ui.addToFormula(' / ');	
 					}															
+				}
+
+				document.getElementById('plusMinus').onclick = function() {
+					calculator.formula = calculator.formula.toString();
+					calculator.screenText = calculator.formula;
+					
+					if (calculator.screenText[0] !== "-" && calculator.formula >= 0) {																			
+						calculator.screenText = "- " + calculator.screenText;
+						calculator.formula = calculator.formula.substr(0, calculator.formula.length - 1);
+						calculator.formula += calculator.screenText;					
+					} else {						
+						calculator.formula = calculator.formula.substr(1, calculator.formula.length - 1);						
+					}
+					ui.displayAnswer();
 				}
 
 				document.getElementById('equals').onclick = function() {
@@ -130,5 +146,4 @@ var Calc_UI = {
 
 // app
 var calculator = new Calculator();
-
 Calc_UI.bindNumpad();
