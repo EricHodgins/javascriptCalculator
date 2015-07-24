@@ -56,54 +56,119 @@ var Calc_UI = {
 					ui.displayAnswer();
 				}
 
-				document.getElementById('plus').onclick = function() {	
-					if (/^([ - /*///+/])$/.test(calculator.formula[calculator.formula.length - 2])) {									
-						ui.adjustFormula(' + ');
-					} else {												
+				document.getElementById('plus').onclick = function() {						
+
+					if (/^( [-/*///+/] )$/.test(calculator.formula[calculator.formula.length - 2])) {	
+						print("adjust");
+						if (calculator.formula.length - 2 === 0) {
+							ui.addToFormula(' + ');
+						} else {										
+							ui.adjustFormula(' + ');
+						}
+					} else {			
+						print("add");									
 						ui.addToFormula(' + ');
 					}												
 				}
 
 				document.getElementById('minus').onclick = function() {	
-					if (/^([/+//*// - ])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
-						ui.adjustFormula(' - ');
+					if (/^([/+//*//-])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
+						if (calculator.formula.length - 2 === 0) {
+							ui.addToFormula(' - ');
+						} else {
+							ui.adjustFormula(' - ');	
+						}
+						
 					} else {
 						ui.addToFormula(' - ');
 					}																						
 				}
 
 				document.getElementById('multiply').onclick = function() {	
-					if (/^([/+//*// - ])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
-						ui.adjustFormula(' * ');
+					if (/^([/+//*//-])$/.test(calculator.formula[calculator.formula.length - 2]) ) {
+						if (calculator.formula.length - 2 === 0) {
+							ui.addToFormula(' * ');	
+						} else {
+							ui.adjustFormula(' * ');
+						}
 					} else {
 						ui.addToFormula(' * ');
 					}																	
 				}
 
 				document.getElementById('divide').onclick = function() {	
-					if (/^([/+//*/ - /])$/.test(calculator.formula[calculator.formula.length - 2]) ) {						
-						ui.adjustFormula(' / ');
+					if (/^([/+//*/-/])$/.test(calculator.formula[calculator.formula.length - 2]) ) {						
+						if (calculator.formula.length - 2 === 0) {
+							ui.addToFormula(' / ');	
+						} else {							
+							ui.adjustFormula(' / ');
+						}							
 					} else {					
 						ui.addToFormula(' / ');	
 					}															
 				}
 
 				document.getElementById('plusMinus').onclick = function() {
-					if (/[-]/.test(calculator.screenText)) {
-						print("third");
-						calculator.screenText = calculator.screenText.replace("-", "");
-						calculator.formula = calculator.formula.substr(0, calculator.formula.length - calculator.screenText.length - 1);
-						calculator.formula += calculator.screenText;
-					} else if (calculator.screenText !== '') {
-						print("firt");
-						calculator.screenText = "-" + calculator.screenText;
-					 	calculator.formula = calculator.formula.substr(0, (calculator.formula.length - calculator.screenText.length + 1));
-					 	calculator.formula += calculator.screenText;
-					} else if (calculator.screenText === '') {
-						print("se");
-						calculator.screenText = "-" + calculator.screenText;
-						calculator.formula = calculator.formula + calculator.screenText;
+					if (calculator.accumulative === '') {
+						if (/[-]/.test(calculator.screenText)) {
+							calculator.screenText = calculator.screenText.replace("-", "");
+							calculator.formula = "";	
+						} else {
+							calculator.screenText = "-" + calculator.screenText;
+							calculator.formula = "-" + calculator.formula;
+						}
+							
+					} else {
+						calculator.accumulative *= -1;
+						
+						if (/ [/+//*//-] /.test(calculator.formula)) {
+							print("there is operaton");
+							if (calculator.screenText === '-') {
+								calculator.screenText = "";
+								calculator.formula = calculator.formula.substr(0, calculator.formula.length - calculator.screenText.length - 1);
+							} else if (calculator.screenText === '') {
+								calculator.formula += "-";
+								calculator.screenText = "-"; 
+							} else if (/[0-9]/.test(calculator.screenText)) {
+								print("nummed");
+								calculator.screenText = -1*parseFloat(calculator.screenText);
+								calculator.screenText = calculator.screenText.toString();
+								var opIdx = /[/+//*//-]/.exec(calculator.formula);
+								calculator.formula = calculator.formula.substr(0, opIdx.index + 2);
+								print(calculator.formula);
+								calculator.formula = calculator.formula + calculator.screenText;
+							}
+						} else {
+							calculator.screenText = calculator.accumulative.toString();
+							calculator.formula = calculator.accumulative.toString();
+						}							
+						
+						print('ok');
 					} 
+
+					// if (calculator.screenText === '') {
+					// 	calculator.formula = calculator.formula.toString();											
+					// }
+
+
+					// if (/[-]/.test(calculator.screenText)) {
+					// 	print("third");
+					// 	calculator.screenText = calculator.screenText.replace("-", "");
+					// 	calculator.formula = calculator.formula.substr(0, calculator.formula.length - calculator.screenText.length - 1);
+					// 	calculator.formula += calculator.screenText;
+					// } else if (calculator.screenText !== '') {
+					// 	print("firt");
+					// 	calculator.screenText = "-" + calculator.screenText;
+					//  	calculator.formula = calculator.formula.substr(0, (calculator.formula.length - calculator.screenText.length + 1));
+					//  	calculator.formula += calculator.screenText;
+					// } else if(calculator.screenText === '') {
+					// 	calculator.screenText = '-';
+					// 	if (calculator.formula.length === 0) {
+					// 		calculator.formula = "-";
+					// 	} else {
+					// 		calculator.formula = calculator.formula + " -";	
+					// 	}						
+					// }
 
 					ui.displayAnswer();
 				}
