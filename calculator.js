@@ -117,6 +117,16 @@ var Calc_UI = {
 		calculator.equalsPressed = false;
 	},
 
+	keyBoardNumpadEvent: function(num) {
+		if (calculator.equalsPressed === true) {
+			calculator.clearAll();
+			calculator.equalsPressed = false;
+		}
+		calculator.screenText += num;
+		calculator.formula += num;
+		calculator.formulaTracking += num;
+		this.displayAnswer();
+	},
 
 	displayAnswer: function() {
 		var ans = document.getElementById('calc-screen');	
@@ -132,3 +142,34 @@ var Calc_UI = {
 var calculator = new Calculator();
 
 Calc_UI.bindNumpad();
+
+
+
+
+window.addEventListener("keydown", function(event) {
+	print(event.keyCode);
+	switch (event.keyCode) {
+		case 49:
+			Calc_UI.keyBoardNumpadEvent('1');
+	}
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
