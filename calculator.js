@@ -136,8 +136,8 @@ var Calc_UI = {
 									calculator.screenText = "-" + calculator.screenText;
 								}
 
-								var opIdx = /[/+//*//-]/.exec(calculator.formula);
-								calculator.formula = calculator.formula.substr(0, opIdx.index + 2);
+								var opIdx = / [/+//*//-] /.exec(calculator.formula);
+								calculator.formula = calculator.formula.substr(0, opIdx.index + 3);
 								calculator.formula = calculator.formula + calculator.screenText;
 							}
 						} else {
